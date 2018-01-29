@@ -8,4 +8,8 @@ class Superhero < ApplicationRecord
       marvel: 1,
       dc: 2
   }
+
+  def wiki_url
+    "#{self.universe}.wikia.com/wiki/#{self.urlslug[2..urlslug.length-1]}"
+  end
 end

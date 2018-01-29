@@ -41,3 +41,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'smarter_csv'
 gem 'activerecord-import'
+gem 'active_model_serializers', require: true
+gem 'will_paginate'
+gem 'friendly_id', '~> 5.1.0'

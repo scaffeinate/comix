@@ -17,19 +17,31 @@ namespace :load do
   end
   
   task :images => :environment do
-    @universes = Superhero.all.group_by(&:universe)
-    @images = Array.new
+    @universes = Superhero.left_joins(:images).where("images.id IS NULL").group_by(&:universe)
+    @successful_fetches = 0
+    @failed_fetches = 0
     @universes.each do |u, v|
+      puts "\n<======= Processing #{u} universe ========>"
       @superheros = v
       @media = MediaWiki::Gateway.new("http://#{u}.wikia.com/api.php")
       @superheros.each do |superhero|
+        puts "\n<======= Fetching Images for #{superhero.name} ========>"
         images_arr = fetch_image_urls(@media, superhero)
-        if images_arr && !images_arr.empty?
-          @images += images_arr
+        if !images_arr.nil? && !images_arr.empty?
+          puts "\n<======= Importing #{images_arr.length} images ========>"
+          import_records(Image, @image_columns, images_arr)
+          @successful_fetches += 1
+          puts "\n<======= Imported #{images_arr.length} images for #{superhero.name} ========>"
+        else
+          @failed_fetches += 1
+          puts "\n<======= Failed to Fetch images for #{superhero.name} ========>"
         end
+        break
       end
+      break
     end
-    import_records(Image, @image_columns, @images)
+    puts "\n<======= Number of successful fetches = #{@successful_fetches} ========>"
+    puts "\n<======= Number of failed fetches = #{@failed_fetches} ========>"
   end
 end
 
@@ -44,7 +56,7 @@ def fetch_superheros(universe)
 end
 
 def import_records(clazz, columns, records)
-  return if(columns.nil? || !columns.empty? || records.nil? || records.empty?)
+  return unless columns && records
   begin
     clazz.import(columns, records)
   rescue StandardError => e
@@ -57,7 +69,7 @@ def fetch_image_urls(media, superhero)
   res = Array.new
   images.each do |image|
     file_name = strip_file_type(image)
-    image_info = fetch_image_info(file_name) if file_name
+    image_info = fetch_image_info(media, file_name) if file_name
     image_info[:superhero_id] = superhero.id
     res.push(image_info) if image_info
   end
@@ -72,12 +84,12 @@ def strip_file_type(file)
   end
 end
 
-def fetch_image_info(name)
+def fetch_image_info(media, name)
   begin
     image_info = media.image_info(name, 'iiprop' => ['url'])
     url = image_info ? image_info["url"] : nil
-    descriptionurl = image_info ? image_info["descriptionurl"] || nil
-    return { url: url, descriptionurl: descriptionurl } if url
+    descriptionurl = image_info ? image_info["descriptionurl"] : nil
+    return { url: url, description: descriptionurl } if url
   rescue StandardError => e
     puts "Exception occurred while fetching image_info for #{name} => #{e.message}"
   end

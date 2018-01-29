@@ -16,8 +16,6 @@ namespace :load do
     @dc_superheros = fetch_superheros(:dc)
     puts "Number of DC Superheros: #{@dc_superheros.size}"
     import(@columns, @dc_superheros)
-
-    Superhero.find_each(&:save)
   end
 end
 

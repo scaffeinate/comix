@@ -44,3 +44,4 @@ gem 'activerecord-import'
 gem 'active_model_serializers', require: true
 gem 'will_paginate'
 gem 'friendly_id', '~> 5.1.0'
+gem 'redis'

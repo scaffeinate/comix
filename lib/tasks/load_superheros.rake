@@ -68,8 +68,10 @@ def fetch_image_urls(media, superhero)
   images.each do |image|
     file_name = strip_file_type(image)
     image_info = fetch_image_info(media, file_name) if file_name
-    image_info[:superhero_id] = superhero.id
-    res.push(image_info) if image_info
+    if image_info
+      image_info[:superhero_id] = superhero.id
+      res.push(image_info)
+    end
   end
   return res
 end

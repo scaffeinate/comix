@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get '/superheros/:universe' => 'superheros#index'
       get '/superhero/:id' => 'superheros#show'
+      get '/autocomplete' => 'autocomplete#index'
     end
   end
 end

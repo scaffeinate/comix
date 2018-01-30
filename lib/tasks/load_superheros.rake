@@ -15,7 +15,7 @@ namespace :load do
     @dc_superheros = fetch_superheros(:dc)
     import_records(Superhero, @superhero_columns, @dc_superheros)
   end
-  
+
   task :images => :environment do
     @universes = Superhero.left_joins(:images).where("images.id IS NULL").group_by(&:universe)
     @successful_fetches = 0
@@ -36,9 +36,7 @@ namespace :load do
           @failed_fetches += 1
           puts "\n<======= Failed to Fetch images for #{superhero.name} ========>"
         end
-        break
       end
-      break
     end
     puts "\n<======= Number of successful fetches = #{@successful_fetches} ========>"
     puts "\n<======= Number of failed fetches = #{@failed_fetches} ========>"

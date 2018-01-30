@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180129052426) do
+ActiveRecord::Schema.define(version: 20180129174108) do
 
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string   "slug",                      null: false
@@ -22,6 +22,15 @@ ActiveRecord::Schema.define(version: 20180129052426) do
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
     t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
+  end
+
+  create_table "images", force: :cascade do |t|
+    t.text     "url"
+    t.text     "description"
+    t.integer  "superhero_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["superhero_id"], name: "index_images_on_superhero_id"
   end
 
   create_table "superheros", force: :cascade do |t|
@@ -40,7 +49,6 @@ ActiveRecord::Schema.define(version: 20180129052426) do
     t.integer  "year",             default: 0
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
-    t.text     "image_url"
     t.integer  "universe",         default: 0, null: false
     t.string   "slug"
     t.index ["slug"], name: "index_superheros_on_slug", unique: true

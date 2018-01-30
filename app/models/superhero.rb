@@ -3,6 +3,7 @@ class Superhero < ApplicationRecord
   friendly_id :name, use: [:slugged, :finders]
 
   self.per_page = 25
+  has_many :images
 
   enum universe: {
       marvel: 1,
